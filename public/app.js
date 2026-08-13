@@ -292,9 +292,10 @@ messageInput.addEventListener("input", () => {
 });
 
 function addMessage(message) {
+  const isMine = message.username === myUsername;
   const wrapper = document.createElement("div");
   wrapper.className = `message ${
-    message.username === myUsername ? "mine" : ""
+    isMine ? "mine" : ""
   }`;
 
   const bubble = document.createElement("div");
@@ -304,7 +305,8 @@ function addMessage(message) {
   meta.className = "meta";
 
   const date = new Date(message.timestamp);
-  meta.textContent = `${message.username} • ${formatTime(date)}`;
+  const senderName = isMine ? "You" : message.username;
+  meta.textContent = `${senderName} • ${formatTime(date)}`;
   bubble.appendChild(meta);
 
   let msgText = message.text;
