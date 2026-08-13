@@ -7,7 +7,6 @@ const usernameInput = document.getElementById("username");
 const roomInput = document.getElementById("room-id");
 const joinError = document.getElementById("join-error");
 
-const roomLabel = document.getElementById("room-label");
 const receiverNameEl = document.getElementById("receiver-name");
 const messagesEl = document.getElementById("messages");
 const messageForm = document.getElementById("message-form");
@@ -45,6 +44,11 @@ joinForm.addEventListener("submit", (event) => {
 
   if (!myUsername || !roomId) return;
 
+  if (roomId !== "69420") {
+    joinError.textContent = "Room not found";
+    return;
+  }
+
   joinError.textContent = "";
 
   socket.emit("join-room", {
@@ -61,7 +65,6 @@ socket.on("joined-room", ({ roomId, users }) => {
   joinScreen.classList.add("hidden");
   chatScreen.classList.remove("hidden");
 
-  roomLabel.textContent = `Room: ${roomId}`;
   lastReceiver = "";
   updateStatus(users);
   messageInput.focus();

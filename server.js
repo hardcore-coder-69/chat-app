@@ -34,6 +34,8 @@ function cleanRoom(roomId) {
   }
 }
 
+const ALLOWED_ROOM = "69420";
+
 io.on("connection", (socket) => {
   console.log("Connected:", socket.id);
 
@@ -46,11 +48,16 @@ io.on("connection", (socket) => {
       return;
     }
 
+    if (roomId !== ALLOWED_ROOM) {
+      socket.emit("join-error", "Room not found");
+      return;
+    }
+
     const room = getRoom(roomId);
 
     // Only two people are allowed in a room.
     if (room.users.size >= 2 && !room.users.has(socket.id)) {
-      socket.emit("join-error", "This chat already has two people.");
+      socket.emit("join-error", "Room is locked");
       return;
     }
 
