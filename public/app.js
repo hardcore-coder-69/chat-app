@@ -44,10 +44,10 @@ joinForm.addEventListener("submit", (event) => {
 
   if (!myUsername || !roomId) return;
 
-  if (roomId !== "69420") {
-    joinError.textContent = "Room not found";
-    return;
-  }
+  // if (roomId !== "69420") {
+  //   joinError.textContent = "Room not found";
+  //   return;
+  // }
 
   joinError.textContent = "";
 
@@ -306,9 +306,8 @@ messageInput.addEventListener("input", () => {
 function addMessage(message) {
   const isMine = message.username === myUsername;
   const wrapper = document.createElement("div");
-  wrapper.className = `message ${
-    isMine ? "mine" : ""
-  }`;
+  wrapper.className = `message ${isMine ? "mine" : ""
+    }`;
 
   const bubble = document.createElement("div");
   bubble.className = "bubble";
