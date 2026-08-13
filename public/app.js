@@ -65,16 +65,49 @@ socket.on("joined-room", ({ roomId, users }) => {
   lastReceiver = "";
   updateStatus(users);
   messageInput.focus();
+  triggerMarkSeen();
 });
 
 socket.on("chat-history", (messages) => {
   messagesEl.innerHTML = "";
   messages.forEach(addMessage);
+
+  if (messages.length > 0) {
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.username === myUsername && lastMsg.seen) {
+      updateSeenDisplay(true);
+    } else {
+      updateSeenDisplay(false);
+    }
+
+    const hasUnseenOther = messages.some(
+      (m) => m.username !== myUsername && !m.seen
+    );
+    if (hasUnseenOther) {
+      triggerMarkSeen();
+    }
+  } else {
+    updateSeenDisplay(false);
+  }
+
   scrollToBottom();
 });
 
 socket.on("new-message", (message) => {
   addMessage(message);
+
+  if (message.username === myUsername) {
+    updateSeenDisplay(false);
+  } else {
+    updateSeenDisplay(false);
+    triggerMarkSeen();
+  }
+
+  scrollToBottom();
+});
+
+socket.on("messages-seen", () => {
+  updateSeenDisplay(true);
   scrollToBottom();
 });
 
@@ -398,3 +431,37 @@ function formatTime(date) {
 function scrollToBottom() {
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
+
+function updateSeenDisplay(isSeen) {
+  const existingSeen = messagesEl.querySelectorAll(".seen-status");
+  existingSeen.forEach((el) => el.remove());
+
+  if (!isSeen) return;
+
+  const allMessages = messagesEl.querySelectorAll(".message");
+  if (allMessages.length === 0) return;
+
+  const lastMessage = allMessages[allMessages.length - 1];
+  if (lastMessage && lastMessage.classList.contains("mine")) {
+    const seenEl = document.createElement("div");
+    seenEl.className = "seen-status";
+    seenEl.textContent = "Seen just now";
+    lastMessage.appendChild(seenEl);
+  }
+}
+
+function triggerMarkSeen() {
+  if (chatScreen.classList.contains("hidden")) return;
+  if (document.hidden) return;
+  socket.emit("mark-seen");
+}
+
+window.addEventListener("focus", triggerMarkSeen);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    triggerMarkSeen();
+  }
+});
+messageInput.addEventListener("focus", triggerMarkSeen);
+chatScreen.addEventListener("click", triggerMarkSeen);
+

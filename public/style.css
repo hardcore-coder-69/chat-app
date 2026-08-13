@@ -217,11 +217,37 @@ button:hover {
 
 .message {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: 12px;
 }
 
 .message.mine {
-  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.seen-status {
+  font-size: 11px;
+  color: #8b95a5;
+  margin-top: 4px;
+  margin-right: 4px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+  animation: seenFadeIn 0.25s ease-out;
+}
+
+@keyframes seenFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .bubble {

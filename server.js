@@ -112,12 +112,22 @@ io.on("connection", (socket) => {
     const room = rooms.get(roomId);
     if (!room) return;
 
+    // Mark previous messages from other user as seen since this user is sending a message
+    for (const msg of room.messages) {
+      if (msg.username !== username && !msg.seen) {
+        msg.seen = true;
+        msg.seenAt = new Date().toISOString();
+      }
+    }
+
     const message = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       username,
       text: text || null,
       image: image || null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      seen: false,
+      seenAt: null
     };
 
     room.messages.push(message);
@@ -128,6 +138,31 @@ io.on("connection", (socket) => {
     }
 
     io.to(roomId).emit("new-message", message);
+  });
+
+  socket.on("mark-seen", () => {
+    const roomId = socket.data.roomId;
+    const username = socket.data.username;
+    if (!roomId || !username) return;
+
+    const room = rooms.get(roomId);
+    if (!room) return;
+
+    let hasUnseen = false;
+    for (const msg of room.messages) {
+      if (msg.username !== username && !msg.seen) {
+        msg.seen = true;
+        msg.seenAt = new Date().toISOString();
+        hasUnseen = true;
+      }
+    }
+
+    if (hasUnseen) {
+      socket.to(roomId).emit("messages-seen", {
+        seenBy: username,
+        seenAt: new Date().toISOString()
+      });
+    }
   });
 
   socket.on("typing", () => {
