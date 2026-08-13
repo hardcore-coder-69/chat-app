@@ -64,36 +64,12 @@ socket.on("join-error", (message) => {
 socket.on("joined-room", ({ roomId, users }) => {
   joinScreen.classList.add("hidden");
   chatScreen.classList.remove("hidden");
+  messagesEl.innerHTML = "";
 
   lastReceiver = "";
   updateStatus(users);
   messageInput.focus();
   triggerMarkSeen();
-});
-
-socket.on("chat-history", (messages) => {
-  messagesEl.innerHTML = "";
-  messages.forEach(addMessage);
-
-  if (messages.length > 0) {
-    const lastMsg = messages[messages.length - 1];
-    if (lastMsg.username === myUsername && lastMsg.seen) {
-      updateSeenDisplay(true);
-    } else {
-      updateSeenDisplay(false);
-    }
-
-    const hasUnseenOther = messages.some(
-      (m) => m.username !== myUsername && !m.seen
-    );
-    if (hasUnseenOther) {
-      triggerMarkSeen();
-    }
-  } else {
-    updateSeenDisplay(false);
-  }
-
-  scrollToBottom();
 });
 
 socket.on("new-message", (message) => {

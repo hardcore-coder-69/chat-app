@@ -34,7 +34,7 @@ function cleanRoom(roomId) {
   }
 }
 
-const ALLOWED_ROOM = "69420";
+// const ALLOWED_ROOM = "69420";
 
 io.on("connection", (socket) => {
   console.log("Connected:", socket.id);
@@ -48,10 +48,10 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (roomId !== ALLOWED_ROOM) {
-      socket.emit("join-error", "Room not found");
-      return;
-    }
+    // if (roomId !== ALLOWED_ROOM) {
+    //   socket.emit("join-error", "Room not found");
+    //   return;
+    // }
 
     const room = getRoom(roomId);
 
@@ -66,8 +66,6 @@ io.on("connection", (socket) => {
     socket.data.username = username;
 
     room.users.set(socket.id, username);
-
-    socket.emit("chat-history", room.messages);
 
     socket.emit("joined-room", {
       roomId,
