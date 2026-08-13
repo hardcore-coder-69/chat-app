@@ -131,9 +131,18 @@ button:hover {
 }
 
 .chat-header-left h2 {
-  margin: 0;
+  margin: 0 0 2px 0;
   font-size: 16px;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#room-label {
+  color: #98a2b3;
+  font-size: 12px;
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -548,6 +557,10 @@ button:hover {
 
   .chat-header-left h2 {
     font-size: 14px;
+  }
+
+  #room-label {
+    font-size: 11px;
   }
 
   .receiver-name {
