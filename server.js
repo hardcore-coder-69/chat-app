@@ -84,8 +84,6 @@ io.on("connection", (socket) => {
       count: room.users.size,
       users: [...room.users.values()]
     });
-
-    console.log(`${username} joined room ${roomId}`);
   });
 
   socket.on("send-message", (payload) => {
